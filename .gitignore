@@ -10,6 +10,7 @@
 *.bak
 .coq-native/
 build-dep/
+.coqdeps.d
 Makefile.coq
 Makefile.coq.conf
 *.crashcoqide

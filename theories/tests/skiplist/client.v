@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From Coq Require Export Sorted.
 From iris.program_logic Require Export weakestpre prob_adequacy.
 From iris.base_logic.lib Require Export invariants.
@@ -14,7 +14,7 @@ Module P <: SKIPLIST_PARAMS.
   Definition INT_MIN := -1000%Z.
   Definition INT_MAX := 1000%Z.
   Lemma HMIN_MAX : (INT_MIN < INT_MAX)%Z.
-  Proof. rewrite /INT_MIN/INT_MAX. by omega. Qed.
+  Proof. rewrite /INT_MIN/INT_MAX. by lia. Qed.
 End P.
 
 Module Import Spec := Skiplist_Spec P.

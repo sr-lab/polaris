@@ -1,6 +1,6 @@
 From iris.algebra Require Export list big_op.
 From iris.base_logic Require Export base_logic.
-From stdpp Require Import gmap fin_collections gmultiset functions.
+From stdpp Require Import gmap fin_sets gmultiset functions.
 Set Default Proof Using "Type".
 Import uPred.
 

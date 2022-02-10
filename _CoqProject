@@ -14,6 +14,7 @@ proba/theories/basic/exp_ext.v
 proba/theories/basic/Reals_ext.v
 proba/theories/basic/classic_proof_irrel.v
 proba/theories/measure/sets.v
+proba/theories/measure/disjoint_list.v
 proba/theories/measure/measures.v
 proba/theories/measure/borel.v
 proba/theories/measure/outer_measure.v

@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From mathcomp Require Import ssreflect ssrbool ssrfun eqtype choice fintype bigop.
 From discprob.measure Require Export sets measures.
 From stdpp Require Import tactics.

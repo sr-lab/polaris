@@ -4,7 +4,7 @@ From discprob.monad Require Import monad monad_hoare.
 From discprob.monad Require quicksort quicksort_cost.
 From mathcomp Require Import ssreflect ssrbool ssrfun eqtype ssrnat seq div choice fintype.
 From mathcomp Require Import tuple finfun bigop prime binomial finset.
-From Coq Require Import Omega Psatz Program.Wf MSets.MSetInterface MSets.MSetGenTree Structures.OrdersEx.
+From Coq Require Import Lia Psatz Program.Wf MSets.MSetInterface MSets.MSetGenTree Structures.OrdersEx.
 Local Open Scope nat_scope.
 
 (* TODO: should make unif generic over ``cost'' or not, so don't have to repeat this
@@ -26,7 +26,7 @@ Next Obligation.
     destruct n; first fourier.
     replace 0 with (INR O) by auto.
     cut (INR 0 < INR (S n)); intros; first by fourier.
-    apply lt_INR. omega.
+    apply lt_INR. lia.
   - rewrite in_cons. move /orP => [Heq|Hin]; eauto.
     move /eqP in Heq. rewrite Heq. 
     destruct (Rle_dec 0 (1 / _)) as [|Hn]; [ by auto | exfalso; apply Hn].
@@ -34,7 +34,7 @@ Next Obligation.
     destruct n; first by fourier.
     replace 0 with (INR O) by auto.
     cut (INR 0 < INR (S n)); intros; first by fourier.
-    apply lt_INR; omega.
+    apply lt_INR; lia.
 Qed.
 Next Obligation.
   intros ?.
@@ -49,7 +49,7 @@ Next Obligation.
     destruct n; first fourier.
     replace 0 with (INR O) by auto.
     cut (INR 0 < INR (S n)); first by intros; fourier.
-    apply lt_INR; omega.
+    apply lt_INR; lia.
   }
   induction o => k.
   - rewrite big_nil. replace (INR 0) with 0 by auto. rewrite /Rdiv Rmult_0_l //. 
@@ -256,7 +256,7 @@ Proof.
       rewrite //= in Hperm.
       assert (h x < S (S (size l1)))%nat as Hsize'. 
       { apply Hhsize. rewrite //=. }
-      nify. omega.
+      nify. lia.
     }
     set (h' := λ x : {y : nat | (y <= (size (b1 :: l1)))%nat} ,
                      match x with
@@ -275,7 +275,7 @@ Proof.
       symmetry.
       eapply eq_dist_ldist_bind_congr.
       ** intros lt'. eapply IH; eauto.
-         rewrite size_rem; subst => //=; nify; try omega.
+         rewrite size_rem; subst => //=; nify; try lia.
          { apply /mem_nth => //=. }
          rewrite Hhspec; last by rewrite //=.
          apply perm_eq_rem; auto.
@@ -286,7 +286,7 @@ Proof.
     * intros (x&Hx) Hin _ Hfalse. exfalso. apply Hfalse.
       edestruct (Hinv x) as (x'&Hlt&?); eauto.
       { apply perm_eq_size in Hperm. clear -Hx Hperm. 
-        rewrite //= in Hx, Hperm. nify. rewrite //=. omega. } 
+        rewrite //= in Hx, Hperm. nify. rewrite //=. lia. } 
       exists (exist _ x' Hlt); repeat split.
       ** rewrite mem_undup. apply unif_all.
       ** rewrite /h'//=; subst.
@@ -310,7 +310,7 @@ Proof.
   destruct l as [| b1 l]; last destruct l as [| b2 l].
   - subst. rewrite /size/gen_perm.
     assert (Finite.enum [finType of 'I_0] = [::]) as ->.
-    { destruct (Finite.enum _) as [| o l] => //=. inversion o. nify. omega. }
+    { destruct (Finite.enum _) as [| o l] => //=. inversion o. nify. lia. }
     rewrite ?rand_perm_list_unfold. 
     rewrite ldist_left_id. rewrite pr_mret_simpl; done.
   - rewrite rand_perm_list_unfold.
@@ -321,7 +321,7 @@ Proof.
     destruct le; last by done.
     intros ?. rewrite ldist_left_id. rewrite ?pr_mret_simpl //=.
     assert (nat_of_ord o = O) as Hnat.
-    { destruct o as (x&Hlt) => //=. clear -Hlt. rewrite //= in Hlt.  nify. omega. } 
+    { destruct o as (x&Hlt) => //=. clear -Hlt. rewrite //= in Hlt.  nify. lia. } 
     rewrite Hnat //=.
   - rewrite /gen_perm.
 Abort.
@@ -609,7 +609,7 @@ Proof.
              rewrite ?S_INR ?factS mult_INR ?S_INR //=.
              rewrite Hpf' //= in Hsize_combine.
              assert (size l = size l2) as ->.
-             { nify. omega. }
+             { nify. lia. }
              field => //=.
              specialize (INR_fact_gt0 (size l2)); intros.
              specialize (pos_INR (size l2)); intros.
@@ -667,7 +667,7 @@ Proof.
              rewrite ?S_INR ?factS mult_INR ?S_INR //=.
              rewrite Hpf' //= in Hsize_combine.
              assert (S (size l) = size l2) as <-.
-             { nify. omega. }
+             { nify. lia. }
              rewrite factS mult_INR ?S_INR.
              field => //=.
              specialize (INR_fact_gt0 (size l)); intros.
@@ -754,7 +754,7 @@ Proof.
              rewrite ?S_INR ?factS mult_INR ?S_INR //=.
              rewrite Hpf' //= in Hsize_combine.
              assert (size l = size l1) as ->.
-             { nify. omega. }
+             { nify. lia. }
              field => //=.
              specialize (INR_fact_gt0 (size l1)); intros.
              specialize (pos_INR (size l1)); intros.
@@ -812,7 +812,7 @@ Proof.
              rewrite ?S_INR ?factS mult_INR ?S_INR //=.
              rewrite Hpf' //= in Hsize_combine.
              assert (S (size l) = size l1) as <-.
-             { nify. omega. }
+             { nify. lia. }
              rewrite factS mult_INR ?S_INR.
              field => //=.
              specialize (INR_fact_gt0 (size l)); intros.
@@ -935,7 +935,7 @@ Proof.
              rewrite ?S_INR ?factS mult_INR ?S_INR //=.
              rewrite Hpf' //= in Hsize_combine.
              assert (size l = size l1 + size l2 + 1)%nat as ->.
-             { nify. omega. }
+             { nify. lia. }
              rewrite ?S_INR ?factS ?plus_INR ?mult_INR ?S_INR //=.
              field => //=.
              specialize (INR_fact_gt0 (size l1)); intros.
@@ -1031,7 +1031,7 @@ Proof.
              rewrite ?S_INR ?factS mult_INR ?S_INR //=.
              rewrite Hpf' //= in Hsize_combine.
              assert (size l = size l1 + size l2)%nat as ->.
-             { nify. omega. }
+             { nify. lia. }
              rewrite ?S_INR ?factS ?plus_INR ?mult_INR ?S_INR //=.
              field => //=.
              specialize (INR_fact_gt0 (size l1)); intros.
@@ -1113,10 +1113,10 @@ Proof.
     ** intros (Hnlt&Hngt).
        move /ltP in Hnlt.
        move /ltP in Hngt.
-       omega.
-    ** intros ->. split; apply /ltP; omega.
+       lia.
+    ** intros ->. split; apply /ltP; lia.
   * intros a. apply /andP. intros (Hlt1&Hlt2).
     move /ltP in Hlt1.
     move /ltP in Hlt2.
-    omega.
+    lia.
 Qed.

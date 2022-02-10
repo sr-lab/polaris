@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega Fourier.
+Require Import Reals Psatz Lia Fourier.
 From stdpp Require Import tactics list.
 From discprob.basic Require Import seq_ext.
 From mathcomp Require Import ssreflect ssrbool ssrfun eqtype choice fintype bigop.
@@ -839,7 +839,7 @@ Section fubini_tonelli_lr.
           (n&Hr1&Hr2).
       { apply Rdiv_lt_0_compat; auto.
         nra. }
-      destruct n as [| n]; first by omega.
+      destruct n as [| n]; first by lia.
       destruct (Hsmall n) as (Hmeas'&Hsize).
       cut (μ (compl (λ x : A, ex_integral ν (λ y : B, f (x, y)))) <=
            μ (unionF (λ n0 (x : A), INR (S n) <= Integral ν (λ y : B, Rmin (f (x, y)) (INR n0))))).
@@ -876,7 +876,7 @@ Section fubini_tonelli_lr.
         intros => //=. apply Rmin_l. }
       transitivity (v' / INR (S k)); last first.
       { rewrite /Rdiv. apply Rmult_le_compat_r; auto. left.
-        apply Rinv_0_lt_compat. apply pos_INR'. omega. }
+        apply Rinv_0_lt_compat. apply pos_INR'. lia. }
       apply is_integral_bound_measure_above; auto.
       - intros. apply Rge_le, Integral_ge0. intros; apply Rmin_case_strong; eauto using pos_INR.
       - rewrite -(is_integral_unique _ _ _ His').
@@ -887,7 +887,7 @@ Section fubini_tonelli_lr.
         * apply almost_everywhere_meas_everywhere. intros x.
           apply ex_integral_Rmin; eauto.
           eapply fun_left_measurable; eauto.
-      - apply pos_INR'; omega.
+      - apply pos_INR'; lia.
     }
     eapply (is_lim_seq_le _ _ (Finite _) (Finite _)); last eapply is_lim_seq_const.
     { intros n. apply Hlen. }
@@ -895,7 +895,7 @@ Section fubini_tonelli_lr.
     - intros n. apply measurable_fun_ge; eauto.
     - intros i x Hle. etransitivity; eauto.
       apply Integral_mono; eauto.
-      * intros. apply Rle_min_compat_l, le_INR. omega.
+      * intros. apply Rle_min_compat_l, le_INR. lia.
       * apply ex_integral_Rmin; eauto.
         eapply fun_left_measurable; eauto.
       * apply ex_integral_Rmin; eauto.

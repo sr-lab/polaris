@@ -5,10 +5,10 @@ From mathcomp Require Import ssreflect ssrbool ssrfun eqtype ssrnat seq div choi
 From mathcomp Require Import tuple finfun bigop prime binomial finset.
 From Coquelicot Require Import Derive.
 From Coquelicot Require AutoDerive.
-From Interval Require Import Interval_tactic.
+From Interval Require Import Tactic.
 Require Import Reals Fourier FunctionalExtensionality.
 Require Import Psatz.
-Require Import Coq.omega.Omega.
+Require Import Lia.
 Require Import Ranalysis5.
 
 Module recurrence_leader.
@@ -60,7 +60,7 @@ Section recurrence_leader_sec.
     replace 1 with (INR 1) by auto.
     replace 0 with (INR 0) by auto.
     destruct x. rewrite /fst. destruct n; rewrite /snd;
-    intros ?%INR_lt ?%INR_lt; omega.
+    intros ?%INR_lt ?%INR_lt; lia.
   Qed.
                          
   Theorem leader_bound x w: 

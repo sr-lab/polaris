@@ -1,9 +1,9 @@
-Require Import Reals Psatz Omega ClassicalEpsilon.
+Require Import Reals Psatz Lia ClassicalEpsilon.
 From stdpp Require Import tactics.
 From discprob.basic Require Export base Series_Ext order bigop_ext sval Reals_ext.
 From mathcomp Require Import ssreflect ssrbool ssrfun eqtype choice fintype bigop.
 From Coquelicot Require Export Rcomplements Rbar Series Lim_seq Hierarchy Markov Continuity ElemFct.
-From discprob.measure Require Export sets.
+From discprob.measure Require Export sets disjoint_list.
 
 Record sigma_algebra (A: Type) :=
   mkSigma {
@@ -112,7 +112,7 @@ Proof.
   - intros Hle. apply (sigma_proper _ _ (Us O)); eauto.
     intros x; split.
     * firstorder.
-    * intros (i&Hle'&?). inversion Hle'; firstorder.
+    * intros (i&Hle'&?). inversion Hle'; firstorder congruence.
   - intros.  setoid_rewrite range_union_S. apply sigma_closed_pair_union; eauto.
 Qed.
 
@@ -165,6 +165,7 @@ Proof.
 Qed.
 
 
+Local Open Scope R.
 Record measure {A: Type} (F: sigma_algebra A) :=
   { measure_fun :> (A → Prop) → R;
     measure_proper : Proper (@eq_prop A ==> eq) measure_fun;
@@ -216,7 +217,7 @@ Section measure_props.
 
     rewrite union_pair_unionF.
     rewrite measure_additivity_Series => //=.
-    rewrite (Series_incr_n _ 2); [ | omega | ]; last first.
+    rewrite (Series_incr_n _ 2); [ | lia | ]; last first.
     { eexists. apply measure_additivity; auto. }
 
     rewrite //=. rewrite measure_empty Series_0 //. nra.
@@ -254,7 +255,7 @@ Section measure_props.
       ** apply Hin. auto.
       ** intros z (Hin1&Hin2). destruct Hin1 as (j&?&?).
          eapply (Hdisj j (S n)); eauto.
-         omega.
+         lia.
   Qed.
 
   Lemma measure_set_minus X Y:
@@ -304,12 +305,12 @@ Section measure_props.
     intros. apply Hinter; auto.
     induction i.
     * eapply Hproper; last (apply Hcompl, Hempty). clear.
-      firstorder.
+      firstorder lia.
     * assert ((λ x : A, ∀ i' : nat, (i' < S i)%nat → ¬ Us i' x)
                 ≡ compl (Us i) ∩ ((λ x : A, ∀ i' : nat, (i' < i)%nat → ¬ Us i' x))) as Heq.
       { intros x; split.
         ** intros Hin; split; auto.
-           apply (Hin i). omega.
+           apply (Hin i). lia.
         ** intros (Hin1&Hin2); intros i'. inversion 1; subst; auto.
       }
       eapply Hproper; first eapply Heq.
@@ -341,15 +342,15 @@ Section measure_props.
     rewrite diff_below_unionF.
     eapply (is_lim_seq_ext (λ n, sum_n (λ i, μ (diff_below Us i)) n)).
     { intros n. induction n => //=.
-      * rewrite sum_O. apply measure_proper. clear; firstorder.
+      * rewrite sum_O. apply measure_proper. clear; firstorder lia.
       * rewrite sum_Sn /plus IHn //=.
-        rewrite -measure_finite_additivity; auto using diff_below_measurable.
+        rewrite -measure_finite_additivity. auto using diff_below_measurable.
         ** apply measure_proper. intros x; split.
            *** intros [Hle1|(?&?)]; eauto. eapply Hincr; done.
            *** intros HU. rewrite /diff_below.
                destruct (Classical_Prop.classic (Us n x)) as [Hn|Hnotn]; first by left.
                right; split; auto. intros i' Hlt Hsat.
-               apply Hnotn. eapply (measure_incr_mono Us i'); eauto. omega.
+               apply Hnotn. eapply (measure_incr_mono Us i'); eauto. lia.
         ** clear. intros x (Hin1&Hin2). destruct Hin2 as (?&Hfalse).
            eapply Hfalse; eauto.
     }

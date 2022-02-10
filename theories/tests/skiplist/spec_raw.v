@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From Coq Require Export Sorted.
 From iris.program_logic Require Export weakestpre prob_adequacy.
 From iris.base_logic.lib Require Export invariants.
@@ -271,7 +271,7 @@ Proof.
         iDestruct "Hnp_in" as %Hnp_in.
         destruct Hnp_in as [Hnp_in|].
         { exfalso.
-          edestruct (Sorted_lt_hd _ _ _ Hin); subst; try omega.
+          edestruct (Sorted_lt_hd _ _ _ Hin); subst; try lia.
           eapply Sorted_nodekey_snoc; eauto.
         }
         assert (np' ∈ S).
@@ -284,8 +284,8 @@ Proof.
   * wp_op. wp_let. iApply ("IH" with "HΦ [HownS1_dup Hnp_in]").
     {
       iDestruct "Hnp_in" as "[(Hnp_in&?)|%]"; last first.
-      { exfalso. cut (k > node_key np'); try omega. subst. rewrite /right_sentinel/node_key//=. 
-        omega. }
+      { exfalso. cut (k > node_key np'); try lia. subst. rewrite /right_sentinel/node_key//=. 
+        lia. }
       iDestruct "Hnp_in" as %Hnp_in.
       destruct Hnp_in.
       ** iLeft; auto. 
@@ -297,7 +297,7 @@ Proof.
          iDestruct "HownS1_dup" as "(H1&H2)".
          iFrame.
     }
-    iPureIntro. omega.
+    iPureIntro. lia.
 Qed.
 
 
@@ -362,7 +362,7 @@ Proof.
     rewrite (fold_rep_to_node). 
     repeat wp_proj.
     wp_let.  wp_op.
-    case_bool_decide; last omega.
+    case_bool_decide; last lia.
     wp_if. wp_op.
     rewrite //= Zplus_0_r.
     assert (np_pred = np) as ->.
@@ -390,7 +390,7 @@ Proof.
     wp_let. wp_op. 
     case_bool_decide as Hcase.
     { exfalso.
-      cut (node_key np' <= node_key np_pred); first by omega.
+      cut (node_key np' <= node_key np_pred); first by lia.
       assert (In np_pred (np' :: Lremain)) as Hin_np_pred.
       { destruct Hsplit2 as (L1&L2&Heq). 
         rewrite -Heq in Hsplit1.
@@ -417,7 +417,7 @@ Proof.
       }
       cut (Sorted Zlt (map node_key (np' :: Lremain))).
       { intros Hsorted''. apply Sorted_StronglySorted in Hsorted''; last eauto with *.
-        inversion Hsorted''; subst.  inversion Hin_np_pred; first by (subst; omega).
+        inversion Hsorted''; subst.  inversion Hin_np_pred; first by (subst; lia).
         apply Z.lt_le_incl. eapply Forall_forall; eauto.
         apply in_map_iff; eexists; eauto. }
      rewrite -Hsplit1 in Hsorted. 
@@ -435,19 +435,19 @@ Proof.
            { inversion Hsplit1; subst; by left. }
            apply elem_of_list_In, in_app_iff in Hin.
            destruct Hin as [|[|[]]]; first by eapply elem_of_list_In.
-           subst. exfalso. rewrite /node_key/right_sentinel//= in Hcase; omega.
+           subst. exfalso. rewrite /node_key/right_sentinel//= in Hcase; lia.
         ** assert (np' ∈ L ++ [right_sentinel]) as Hin.
            { inversion Hsplit1; subst.
              apply elem_of_list_In. apply in_app_iff.
              right. right; left. auto. }
            apply elem_of_list_In, in_app_iff in Hin.
            destruct Hin as [|[|[]]]; first by eapply elem_of_list_In.
-           subst. exfalso. rewrite /node_key/right_sentinel//= in Hcase; omega.
-      * omega.
+           subst. exfalso. rewrite /node_key/right_sentinel//= in Hcase; lia.
+      * lia.
     }
     iNext. replace (cmps + 1 + 1 + strings.length Lremain) with
                (cmps + 1 + length (np' :: Lremain)); last first.
-    { rewrite /=. rewrite Zpos_P_of_succ_nat. omega. }
+    { rewrite /=. rewrite Zpos_P_of_succ_nat. lia. }
     iApply "HΦ".
 Qed.
 
@@ -460,7 +460,7 @@ Proof.
   revert np_left.
   induction L as [| np L] => np_left.
   - intros (?&?). exists np_left, right_sentinel, [::], [::].
-    split_and!; auto. rewrite /right_sentinel/node_key//=; eauto. omega.
+    split_and!; auto. rewrite /right_sentinel/node_key//=; eauto. lia.
   - intros (?&?).
     destruct (Z_lt_dec (node_key np) k).
     * edestruct IHL as (np_pred&np_find&L1&L2&Hlt&Hgt&Heq); eauto.
@@ -493,9 +493,9 @@ Proof.
     { rewrite -Heq''. rewrite map_cat. apply in_app_iff. by left. }
     rewrite //= in Hin_i.
     inversion Hin_i; subst.
-    * omega.
+    * lia.
     * apply Z.lt_le_incl.
-      eapply (Z.le_lt_trans _ (node_key np_find)); first omega.
+      eapply (Z.le_lt_trans _ (node_key np_find)); first lia.
       eapply Forall_forall; eauto.
   - right. inversion Heq; subst. exists L1; split; auto.
     transitivity (list_between [seq node_key i | i <- (L ++ [:: right_sentinel])] (node_key n) k).
@@ -503,7 +503,7 @@ Proof.
       rewrite map_cat filter_cat //=.
       destruct Zbetween as [Hcase|].
       { replace (node_key right_sentinel) with INT_MAX in Hcase by
-            (rewrite /node_key/right_sentinel//=). omega. }
+            (rewrite /node_key/right_sentinel//=). lia. }
       rewrite cats0 //=.
     }
     rewrite H1.
@@ -522,8 +522,8 @@ Proof.
           eapply Zlt_Sorted_forall_before; eauto.
       }
       rewrite /list_between in Hlist. rewrite Hlist. done.
-    * rewrite //=. destruct Zbetween; try omega.
-      ** destruct Zbetween; first omega.
+    * rewrite //=. destruct Zbetween; try lia.
+      ** destruct Zbetween; first lia.
          f_equal.
          feed pose proof (list_between_all_ge (map node_key L2) (node_key n) k) as Hlist.
          { intros i Hin. 
@@ -536,13 +536,13 @@ Proof.
            apply StronglySorted_inv in Hs2 as (Hs2&_).
            apply StronglySorted_inv in Hs2 as (Hs2&Hforall2).
            apply Z.lt_le_incl.
-           eapply (Z.le_lt_trans _ (node_key np_find)); first omega.
+           eapply (Z.le_lt_trans _ (node_key np_find)); first lia.
            eapply Forall_forall; eauto.
          }
          rewrite /list_between in Hlist; rewrite Hlist //=.
-      ** destruct Zbetween; first omega.
+      ** destruct Zbetween; first lia.
          exfalso.
-         cut (node_key n < node_key np_pred); first omega.
+         cut (node_key n < node_key np_pred); first lia.
          rewrite H1 in Hsort.
          apply Sorted_StronglySorted in Hsort; last auto with *.
          rewrite ?map_cons in Hsort.
@@ -577,7 +577,7 @@ Proof.
     * inversion Heq1; subst. rewrite map_cat.
       rewrite list_between_cat.
       rewrite list_between_all_le_ge //=.
-      { destruct Zbetween; first omega. auto. }
+      { destruct Zbetween; first lia. auto. }
       intros i Hin. left. apply Z.lt_le_incl.
       eapply (Zlt_Sorted_forall_before _ (map node_key (n :: Lvisited))
                                         (map node_key ((L' ++ [:: right_sentinel])))).
@@ -628,7 +628,7 @@ Lemma findPred_aux_spec2 N1 γl1 γl2 γl3 γl4 np_left P `{∀ a, Persistent (P
     findPred_aux #0 (rep_to_node np) #k
     {{{ (np': node_rep) (ck: Z) (cmps: Z), RET (rep_to_node np', (#ck, #cmps));
         own γl2 (◯! S) ∗ P np'
-            ∗ (⌜ node_key np' = fold_left Zmax
+            ∗ (⌜ node_key np' = fold_left Z.max
                                           (list_between (map node_key (elements S)) (node_key np) k)
                                           (node_key np)
                ∧ node_key np' < k 
@@ -660,7 +660,7 @@ Proof.
   { destruct Hcase; first by left.
     right. apply elem_of_list_In. rewrite - Hperm. apply elem_of_elements; auto. }
   edestruct (node_list_split_cover L' np k) as (np_pred&np_find&L1&L2&?&?&Heq_pred).
-  { split; omega. }
+  { split; lia. }
 
   feed pose proof (node_list_split_cover'' L Lvisited L' L1 L2 np_left np np_pred np_find k)
     as Hcase_cover; eauto.
@@ -728,7 +728,7 @@ Proof.
       * by right.
       * exfalso. inversion Hsent as [|[]]; subst.
         assert (node_key right_sentinel = INT_MAX) by (rewrite /node_key/right_sentinel//=).
-        omega.
+        lia.
     }
     rewrite Heq_pred in_app_iff. right. by left.
 Qed.
@@ -809,7 +809,7 @@ Proof.
            iDestruct "Hnp_in" as %Hnp_in.
            destruct Hnp_in as [Hnp_in|].
            { exfalso. apply Sorted_nodekey_snoc in Hsorted.
-             edestruct (Sorted_lt_hd _ _ _ Hin Hsorted); subst; omega. }
+             edestruct (Sorted_lt_hd _ _ _ Hin Hsorted); subst; lia. }
            assert (np'' ∈ S).
            { apply elem_of_elements. rewrite -Hperm. apply elem_of_list_In. auto. }
            assert (S ≡ S ⋅ {[np'']}) as ->.
@@ -824,8 +824,8 @@ Proof.
   * iApply ("IH" with "HΦ [HownS1_dup Hnp_in]").
     {
       iDestruct "Hnp_in" as "[(Hnp_in&HP')|%]"; last first.
-      { exfalso. cut (k > node_key np'); try omega. subst. rewrite /right_sentinel/node_key//=. 
-        omega. }
+      { exfalso. cut (k > node_key np'); try lia. subst. rewrite /right_sentinel/node_key//=. 
+        lia. }
       iDestruct "Hnp_in" as %Hnp_in.
       destruct Hnp_in.
       ** iLeft; auto. 
@@ -837,7 +837,7 @@ Proof.
          iDestruct "HownS1_dup" as "(H1&H2)".
          iFrame.
     }
-    iPureIntro. omega.
+    iPureIntro. lia.
 Qed.
 
 Lemma link_map_rep_invert_to_insert N γz γ np np_succ np_new np_hd (L: list node_rep)
@@ -1231,7 +1231,7 @@ Definition cost_top LT k : nat :=
   S (length (list_between LT INT_MIN k)).
 
 Definition ret_top LT k :=
-  fold_left Zmax (list_between LT INT_MIN k) INT_MIN. 
+  fold_left Z.max (list_between LT INT_MIN k) INT_MIN. 
 
 Definition cost_bottom LT LB k : nat :=
   S (length (list_between LB (ret_top LT k) k)).
@@ -1277,9 +1277,9 @@ Proof.
   wp_let. wp_let.
   wp_apply (findPred_aux_spec2 Nt γt1 γt2 γt3 γt4 np_left_top with "[Hownt]").
   { auto. }
-  { omega. }
+  { lia. }
   { iFrame "Hinvt Hownt". iSplit; auto.
-    iPureIntro. omega. }
+    iPureIntro. lia. }
   iIntros (np_pred_top ck_top cmps_top) "(Hownt&Hex&Hpure&Hlock)".
   iDestruct "Hpure" as %(Htop_fold&Hlt_key&Hcmps_top&Hin1&Hin2).
   iDestruct "Hex" as (np_pred_top') "(Hpure&Hnp_pred_top'_handle)".
@@ -1334,8 +1334,8 @@ Proof.
 
   wp_apply (findPred_aux_spec2 Nb γb1 γb2 γb3 γb4 np_left_bottom with "[Hownb]").
   { auto. }
-  { omega. }
-  { iFrame "Hinvb Hownb". iSplit; auto. iPureIntro; omega. }
+  { lia. }
+  { iFrame "Hinvb Hownb". iSplit; auto. iPureIntro; lia. }
 
   iIntros (np_pred_bottom ck_bottom cmps_bottom) "(Hownb&Hex'&Hpure'&Hlock')".
   iDestruct "Hpure'" as %(Hbot_fold&?&Hcmps_bot&Hin1'&Hin2').
@@ -1687,11 +1687,11 @@ Proof.
      iDestruct "Hsucc_case" as "[Hright_sent|(?&Hbot_succ)]".
      { iDestruct "Hright_sent" as %Hright_sent. exfalso.
        rewrite /right_sentinel in Hright_sent *.
-       subst. rewrite /node_key //= in Hlt_max. omega.
+       subst. rewrite /node_key //= in Hlt_max. lia.
      }
      iDestruct "Hbot_succ" as (np''_succ) "(%&Hbot_succ_handle)".
      iDestruct "Hbot_succ_handle" as "[Hleft|(Hin&Hins)]".
-     { iDestruct "Hleft" as %Hleft. exfalso. subst. omega. }
+     { iDestruct "Hleft" as %Hleft. exfalso. subst. lia. }
      iInv Nb as "Hinv" "Hclose_bot".
      iDestruct "Hinv" as (S L Smap) "(>H1a&Hlink&HownS1&HownS2&HownSmap)".
      iDestruct "H1a" as %(Hperm&Hsorted&Hnset).
@@ -1768,7 +1768,7 @@ Proof.
   rewrite -[a in (nodeVal a)]fold_rep_to_node. wp_let. do 3 wp_proj.
   rewrite Hnp'_bot_eq.
   wp_apply (findLockPred_spec); auto.
-  { iFrame "Hinvb". rewrite -Hnp'_bot_key; iSplitR ""; last by (iPureIntro; omega).
+  { iFrame "Hinvb". rewrite -Hnp'_bot_key; iSplitR ""; last by (iPureIntro; lia).
     iDestruct "Hnp'_bot_handle" as "[?|(?&?)]";  auto.
   }
   iIntros (np'' ck'') "(#Hnp''_handle&Hnp''_range&_&Hnp''_succ)".
@@ -1784,11 +1784,11 @@ Proof.
      iDestruct "Hsucc_case" as "[Hright_sent|(Hin&Hins)]".
      { iDestruct "Hright_sent" as %Hright_sent. exfalso.
        rewrite /right_sentinel in Hright_sent *.
-       subst. rewrite /node_key //= in Hlt_max. omega.
+       subst. rewrite /node_key //= in Hlt_max. lia.
      }
      iDestruct "Hins" as "[Hins|Hins]".
      { iDestruct "Hins" as %Hleft. exfalso.
-       apply (f_equal node_key) in Hleft. rewrite Hnp_left_bot in Hleft. omega. }
+       apply (f_equal node_key) in Hleft. rewrite Hnp_left_bot in Hleft. lia. }
      iInv Nb as "Hinv" "Hclose_bot".
      rewrite //=. rewrite /link_map_inv.
      iDestruct "Hinv" as (S L Smap) "(>H1a&Hlink&HownS1&HownS2&HownSmap)".
@@ -1875,7 +1875,7 @@ Proof.
     wp_alloc bottom_next as "Hb_next".
     iDestruct "Hb_next" as "(Hb_next1&Hb_next2)".
     iDestruct "Hkey" as %Hnp''_succ_key.
-    rewrite (Zlt_range_split_op (node_key np'') (node_key np''_succ) k); last by omega.
+    rewrite (Zlt_range_split_op (node_key np'') (node_key np''_succ) k); last by lia.
     iDestruct "Htok" as "((Htok_range1&Htok_range2)&Htok_k)".
     wp_apply (newlock_spec nroot (∃ np''0 : node_rep, bottom_next ↦{1 / 2} rep_to_node np''0
                                   ∗ own γb3 (GSet (Zlt_range k (node_key np''0))))%I
@@ -1962,8 +1962,8 @@ Proof.
      rewrite (fold_rep_to_node np_new_bottom).
      wp_apply (link_map_insert_spec with
                    "[Hinvb Hb_next1 Hpt Hownb Hownb_map His_lock_bottom HownSb1_rem]"); auto.
-     { rewrite {2}/node_key//=.  omega. }
-     { rewrite {1}/node_key//=. erewrite Hnp''_succ_key. omega. }
+     { rewrite {2}/node_key//=.  lia. }
+     { rewrite {1}/node_key//=. erewrite Hnp''_succ_key. lia. }
      { eauto. }
      { iFrame "Hinvb Hnp''_handle". iFrame. auto. }
      iIntros "(Hownb2&#Hownbmap'&#Hownb1&%&Hnext)".
@@ -1979,7 +1979,7 @@ Proof.
      wp_alloc top_next as "Ht_next".
      iDestruct "Ht_next" as "(Ht_next1&Ht_next2)".
      iDestruct "Hnp'_succ_key" as %Hnp'_succ_key.
-     rewrite (Zlt_range_split_op (node_key np') (node_key np'_succ) k); last omega.
+     rewrite (Zlt_range_split_op (node_key np') (node_key np'_succ) k); last lia.
      iDestruct "Htok'" as "((Htok_range1'&Htok_range2')&Htok_k')".
      wp_apply (newlock_spec nroot (∃ np''0 : node_rep, top_next ↦{1 / 2} rep_to_node np''0
                                  ∗ own γt3 (GSet (Zlt_range k (node_key np''0))))%I
@@ -1991,8 +1991,8 @@ Proof.
      rewrite (fold_rep_to_node np_new_top).
 
      wp_apply (link_map_insert_spec with "[Hinvt Ht_next1 Hpt' Hownt Hownt_map His_lock_top]"); auto.
-     { rewrite {2}/node_key//=.  omega. }
-     { rewrite {1}/node_key//=. erewrite Hnp'_succ_key. omega. }
+     { rewrite {2}/node_key//=.  lia. }
+     { rewrite {1}/node_key//=. erewrite Hnp'_succ_key. lia. }
      { eapply HmapT. }
      { iFrame "Hinvt Hnp'_handle". iFrame.
        iExists np_new_bottom. iSplitL ""; last first.
@@ -2041,8 +2041,8 @@ Proof.
      rewrite (fold_rep_to_node np_new_bottom).
      wp_apply (link_map_insert_spec with
                    "[Hinvb Hb_next1 Hpt Hownb Hownb_map His_lock_bottom HownSb1_rem]"); auto.
-     { rewrite {2}/node_key//=.  omega. }
-     { rewrite {1}/node_key//=. erewrite Hnp''_succ_key. omega. }
+     { rewrite {2}/node_key//=.  lia. }
+     { rewrite {1}/node_key//=. erewrite Hnp''_succ_key. lia. }
      { eauto. }
      { iFrame "Hinvb Hnp''_handle". iFrame. auto. }
      iIntros "(Hownb2&#Hownb_map'&#Hownb1&%&Hnext)".

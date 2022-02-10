@@ -309,14 +309,14 @@ Section prob_language.
     terminates s (tr ++ (cfg :: cfg' :: nil)) n.
   Proof.
     intros Hterm Hlookup Hi tr' cfg'' n'' Hle Hsteps.
-    eapply (Hterm _ _ (S n'')); first omega.
+    eapply (Hterm _ _ (S n'')); first lia.
     econstructor; [ econstructor |]; eauto.
   Qed.
 
   Lemma istep_idx_length i (cfg: language.cfg prob_lang) cfg':
     istep i cfg cfg' → (i < length (fst cfg))%nat.
   Proof.
-    inversion 1; subst. rewrite app_length //=. omega. 
+    inversion 1; subst. rewrite app_length //=. lia. 
   Qed.
 
   Lemma ivdist_prim_step_val_mret e σ:
@@ -341,14 +341,14 @@ Section prob_language.
     terminates s (tr ++ (cfg :: cfg :: nil)) n.
   Proof.
     intros Hterm Hsch Hi tr' cfg'' n'' Hle Hsteps.
-    eapply (Hterm _ _ (S n'')); first omega.
+    eapply (Hterm _ _ (S n'')); first lia.
     econstructor; last eauto.
     eapply trace_stutter_step; eauto.
     intros (cfg'&Hstep).
     assert (length (fst cfg) <= i)%nat.
     { eapply lookup_ge_None_1; eauto. }
     feed pose proof (istep_idx_length i cfg cfg'); eauto.
-    omega.
+    lia.
   Qed.
 
   Lemma terminates_stutter_value s tr cfg i ei n :
@@ -359,7 +359,7 @@ Section prob_language.
     terminates s (tr ++ (cfg :: cfg :: nil)) n.
   Proof.
     intros Hterm Hsch Hi Hval tr' cfg'' n'' Hle Hsteps.
-    eapply (Hterm _ _ (S n'')); first omega.
+    eapply (Hterm _ _ (S n'')); first lia.
     econstructor; last eauto.
     eapply trace_stutter_step; eauto.
     intros (cfg'&Hstep).
@@ -378,7 +378,7 @@ Section prob_language.
     intros Hle Hterm.
     intros tr' cfg n'' Hle'' Hnsteps.
     eapply (Hterm _ _ n''); eauto.
-    omega.
+    lia.
   Qed.
     
   Definition terminating s tr := ∃ n, terminates s tr n.

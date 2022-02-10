@@ -195,7 +195,7 @@ Lemma test_iInduction_wf (x : nat) P Q :
 Proof.
   iIntros "#HP HQ".
   iInduction (lt_wf x) as [[|x] _] "IH"; simpl; first done.
-  rewrite (inj_iff S). by iApply ("IH" with "[%]"); first omega.
+  rewrite (inj_iff S). by iApply ("IH" with "[%]"); first lia.
 Qed.
 
 Lemma test_iIntros_start_proof :

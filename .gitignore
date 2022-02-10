@@ -1,4 +1,6 @@
 *.vo
+*.vok
+*.vos
 *.vio
 *.v.d
 *.glob
@@ -10,6 +12,7 @@
 *.bak
 .coq-native/
 build-dep/
+.Makefile.coq.d
 Makefile.coq
 Makefile.coq.conf
 *.crashcoqide

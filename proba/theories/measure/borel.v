@@ -1,5 +1,5 @@
 From stdpp Require Import tactics.
-Require Import Reals Psatz Omega Fourier.
+Require Import Reals Psatz Lia Fourier.
 From discprob.measure Require Export measures.
 From mathcomp Require Import ssreflect ssrbool ssrfun eqtype choice fintype bigop.
 Require ClassicalEpsilon.

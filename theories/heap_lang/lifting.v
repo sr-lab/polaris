@@ -151,7 +151,7 @@ Proof.
     match goal with
     | [ H: ∀ l', _ → σ1 !! l' = None |- _] => eapply H
     end.
-    zify; split; rewrite /loc; omega.
+    split; rewrite /loc; lia.
   }
   iModIntro; iSplit=> //. iFrame. by iApply "HΦ".
 Qed.
@@ -175,21 +175,21 @@ Proof.
   - rewrite //=.
     specialize (gen_heap_alloc σ1 l) => Hgen.
     iMod (Hgen with "Hσ") as "[Hσ Hl]".
-    { eapply Hrange. zify; split; rewrite /loc; omega. }
+    { eapply Hrange. split; rewrite /loc; lia. }
     iModIntro; iSplit=> //. iFrame. iApply "HΦ".
     rewrite big_opS_singleton //=.
   - specialize (gen_heap_alloc σ1 (l + Pos.of_succ_nat n)%positive v) => Hgen.
     iMod (Hgen with "Hσ") as "[Hσ Hl]".
     {
-      eapply Hrange. zify; split; rewrite /loc; try omega.
-      specialize (Zsucc_Pos_succ' n); zify. omega.
+      eapply Hrange. split; rewrite /loc; try lia.
+      specialize (Zsucc_Pos_succ' n); lia.
     }
     iPoseProof ("IH" $! l with "[] [Hl HΦ] Hσ") as "Hfin".
     { iPureIntro => l' Hrange'.
       rewrite lookup_insert_ne.
-      * eapply Hrange. specialize (Pos_of_nat_le (S n)) => ?. zify. split; auto; try omega.
+      * eapply Hrange. specialize (Pos_of_nat_le (S n)) => ?. split; auto; try lia.
       * rewrite /loc. rewrite //= in Hrange'. rewrite Pos.of_nat_succ.
-        zify; omega.
+        lia.
     }
     { iIntros "Hset". iApply "HΦ". 
       rewrite //= big_opS_union.
@@ -217,11 +217,11 @@ Proof.
     match goal with
     | [ H: ∀ l', _ → σ1 !! l' = None |- _] => eapply H
     end.
-    zify; split; rewrite /loc; omega.
+    split; rewrite /loc; lia.
   }
   iModIntro; iSplit=> //.
   assert (Z.to_nat size = O) as ->.
-  { apply Z_to_nat_nonpos. omega. }
+  { apply Z_to_nat_nonpos. lia. }
   iFrame. iApply "HΦ".
   rewrite big_opS_singleton //=.
 Qed.

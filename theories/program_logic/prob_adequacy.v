@@ -108,7 +108,7 @@ Proof.
   rewrite Heq1 in Heq2.
   apply (f_equal length) in Heq2.
   rewrite ?app_length in Heq2.
-  destruct ll1, ll2; rewrite //= in Heq2; try omega; try auto.
+  destruct ll1, ll2; rewrite //= in Heq2; try lia; try auto.
 Qed.
 
 Definition coupling_post {X} (φ : val Λ → X → Prop) (x : language.cfg Λ) y :=
@@ -339,7 +339,7 @@ Proof.
         eapply (istep_atomic _ _ _ ei σ ei' σ' efs (take (S i) (e :: t))); eauto; try f_equal.
         - by rewrite take_drop_middle. 
         - rewrite take_length_le //.
-          specialize (lookup_lt_Some _ _ _ Hlookup) => //=; omega.
+          specialize (lookup_lt_Some _ _ _ Hlookup) => //=; lia.
       }
       clear Hterm.
       iSpecialize ("IH" $! _ _ _ _ _ _ _ with "[%] Hstep"); last iFrame; auto.

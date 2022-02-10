@@ -25,20 +25,20 @@ Lemma Zset_inclusive_range_spec z gap:
 Proof.
   induction gap.
   - rewrite //= => z'. split.
-    * intros ?%elem_of_singleton. subst. omega.
-    * intros (?&?); assert (z = z') as -> by omega. set_solver.
+    * intros ?%elem_of_singleton. subst. lia.
+    * intros (?&?); assert (z = z') as -> by lia. set_solver.
   - rewrite /Zset_inclusive_range -/Zset_inclusive_range => z'. split.
     * intros [Hspz%elem_of_singleton|Hrec]%elem_of_union.
-      ** split; omega.
-      ** destruct (IHgap z') as (Himpl&?). specialize (Himpl Hrec). destruct Himpl; split; try omega.
+      ** split; lia.
+      ** destruct (IHgap z') as (Himpl&?). specialize (Himpl Hrec). destruct Himpl; split; try lia.
          etransitivity; first eassumption.
          rewrite Nat2Z.inj_succ.
-         omega.
+         lia.
     * intros (?&Hle).
       apply Zle_lt_or_eq in Hle as [Hlt|?].
       ** apply elem_of_union_r. eapply IHgap; eauto.
          rewrite Nat2Z.inj_succ in Hlt *.
-         omega.
+         lia.
       ** apply elem_of_union_l. set_solver.
 Qed.
 
@@ -50,12 +50,12 @@ Proof.
     intros (Hincl&Hneq)%elem_of_difference.
     apply Zset_inclusive_range_spec in Hincl.
     assert (z' ≠ z ∧ z' ≠ z + gap) by set_solver.
-    omega.
+    lia.
   - rewrite /Zset_exclusive_range. 
     intros (?&?).
     apply elem_of_difference; split.
-    * apply Zset_inclusive_range_spec; omega.
-    * assert (z' ≠ z ∧ z' ≠ z + gap) by omega.
+    * apply Zset_inclusive_range_spec; lia.
+    * assert (z' ≠ z ∧ z' ≠ z + gap) by lia.
       set_solver.
 Qed.
 
@@ -67,13 +67,13 @@ Proof.
   intros z'.
   rewrite /Zlt_range Zset_exclusive_range_spec; split.
   - intros (?&Hup).  split; auto.
-    replace z2 with (z1 + (z2 - z1)); last by omega.
+    replace z2 with (z1 + (z2 - z1)); last by lia.
     destruct (Z_le_dec 0 (z2 - z1)).
     * rewrite Z2Nat.id in Hup; auto.
-    * rewrite Z_to_nat_nonpos //= in Hup; last by omega.
-      omega.
+    * rewrite Z_to_nat_nonpos //= in Hup; last by lia.
+      lia.
   - intros (?&?).
-    rewrite Z2Nat.id; omega.
+    rewrite Z2Nat.id; lia.
 Qed.
 
 Lemma Zlt_range_split z1 z2 z:
@@ -84,12 +84,12 @@ Proof.
   intros x. split.
   - rewrite Zlt_range_spec. intros (?&?).
     destruct (Ztrichotomy_inf x z) as [[Hlt|Heq]|Hgt].
-    * do 2 apply elem_of_union_l. rewrite Zlt_range_spec. omega.
+    * do 2 apply elem_of_union_l. rewrite Zlt_range_spec. lia.
     * apply elem_of_union_r. set_solver. 
-    * apply elem_of_union_l, elem_of_union_r. rewrite Zlt_range_spec. omega.
+    * apply elem_of_union_l, elem_of_union_r. rewrite Zlt_range_spec. lia.
   - rewrite Zlt_range_spec. intros [[Hin|Hin]%elem_of_union|Hin]%elem_of_union. 
-    * rewrite Zlt_range_spec in Hin *; omega.
-    * rewrite Zlt_range_spec in Hin *; omega.
+    * rewrite Zlt_range_spec in Hin *; lia.
+    * rewrite Zlt_range_spec in Hin *; lia.
     * apply elem_of_singleton in Hin. subst. auto.
 Qed.
 
@@ -100,11 +100,11 @@ Proof.
   intros Hrange. rewrite (Zlt_range_split z1 z2 z) //.
   rewrite ?gset_disj_union; auto.
   * intros z' [Hin%Zlt_range_spec|Hin%Zlt_range_spec]%elem_of_union.
-    ** intros; cut (z' = z); first omega.
+    ** intros; cut (z' = z); first lia.
        set_solver.
-    ** intros; cut (z' = z); first omega.
+    ** intros; cut (z' = z); first lia.
        set_solver.
-  * intros z'. rewrite ?Zlt_range_spec. omega.
+  * intros z'. rewrite ?Zlt_range_spec. lia.
 Qed.
 
 Local Open Scope positive_scope.
@@ -123,15 +123,15 @@ Lemma Pset_inclusive_range_spec z gap:
 Proof.
   induction gap.
   - rewrite //= => z'. split.
-    * intros ?%elem_of_singleton. subst. zify; omega.
-    * intros (?&?); assert (z = z') as -> by (zify; omega). set_solver.
+    * intros ?%elem_of_singleton. subst. lia.
+    * intros (?&?); assert (z = z') as -> by (lia). set_solver.
   - rewrite /Pset_inclusive_range -/Pset_inclusive_range => z'. split.
     * intros [Hspz%elem_of_singleton|Hrec]%elem_of_union.
-      ** split; zify; omega.
-      ** destruct (IHgap z') as (Himpl&?). specialize (Himpl Hrec). destruct Himpl; split; try (zify; omega).
+      ** split; lia.
+      ** destruct (IHgap z') as (Himpl&?). specialize (Himpl Hrec). destruct Himpl; split; try (lia).
     * intros (?&Hle).
       assert (z' < z + Pos.of_succ_nat gap ∨ z' = z + Pos.of_succ_nat gap) as [Hlt|?].
-      { zify. omega. }
+      { lia. }
       ** apply elem_of_union_r. eapply IHgap; eauto.
       ** apply elem_of_union_l. set_solver.
 Qed.
@@ -140,7 +140,7 @@ Lemma Pset_inclusive_disjoint_last l n:
   {[(l + Pos.of_succ_nat n)%positive]} ## Pset_inclusive_range l n.
 Proof.
   intros z. rewrite Pset_inclusive_range_spec.
-  intros ->%elem_of_singleton. zify. omega.
+  intros ->%elem_of_singleton. lia.
 Qed.
 
 Lemma Z_to_nat_to_pos z:
@@ -152,17 +152,17 @@ Qed.
 
 Lemma Pos_of_nat_le n: (Pos.of_nat n <= Pos.of_nat (S n))%positive.
 Proof.
-  rewrite /Pos.of_nat; do 2 induction n => //=; zify; omega.
+  rewrite /Pos.of_nat; do 2 induction n => //=; lia.
 Qed.
 
 Lemma Zsucc_Pos_succ (n: nat): (Z.succ n <= Z.pos (Pos.of_nat (S n)))%Z.
 Proof.
-  rewrite /Pos.of_nat; do 2 induction n => //=; zify; omega.
+  rewrite /Pos.of_nat; do 2 induction n => //=; lia.
 Qed.
 
 Lemma Zsucc_Pos_succ' (n: nat): (Z.succ n < Z.pos (Pos.of_nat (S (S n))))%Z.
 Proof.
-  rewrite /Pos.of_nat; do 2 induction n => //=; zify; omega.
+  rewrite /Pos.of_nat; do 2 induction n => //=; lia.
 Qed.
 
 Lemma set_block_comm v l n n' σ1:
@@ -172,8 +172,8 @@ Lemma set_block_comm v l n n' σ1:
 Proof.
   revert v l n' σ1.
   induction n => v l n' σ1 Hle.
-  - rewrite //=. rewrite insert_commute //=. rewrite /loc. zify; omega.
+  - rewrite //=. rewrite insert_commute //=. rewrite /loc. lia.
   - rewrite //= IHn //=. 
-    * rewrite insert_commute //=. rewrite /loc. zify; omega.
-    * zify. omega.
+    * rewrite insert_commute //=. rewrite /loc. lia.
+    * lia.
 Qed.

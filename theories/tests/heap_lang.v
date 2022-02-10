@@ -86,8 +86,8 @@ Section LiftingTests.
     iIntros (Hn) "HΦ". iLöb as "IH" forall (n1 Hn).
     wp_rec. wp_let. wp_op. wp_let.
     wp_op; case_bool_decide; wp_if.
-    - iApply ("IH" with "[%] HΦ"). omega.
-    - by assert (n1 = n2 - 1) as -> by omega.
+    - iApply ("IH" with "[%] HΦ"). lia.
+    - by assert (n1 = n2 - 1) as -> by lia.
   Qed.
 
   Lemma Pred_spec n E Φ : ▷ Φ #(n - 1) -∗ WP Pred #n @ E {{ Φ }}.
@@ -95,9 +95,9 @@ Section LiftingTests.
     iIntros "HΦ". wp_lam.
     wp_op. case_bool_decide; wp_if.
     - wp_op. wp_op.
-      wp_apply FindPred_spec; first omega.
-      wp_op. by replace (n - 1) with (- (-n + 2 - 1)) by omega.
-    - wp_apply FindPred_spec; eauto with omega.
+      wp_apply FindPred_spec; first lia.
+      wp_op. by replace (n - 1) with (- (-n + 2 - 1)) by lia.
+    - wp_apply FindPred_spec; eauto with lia.
   Qed.
 
   Lemma Pred_user E :

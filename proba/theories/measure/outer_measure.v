@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From discprob.measure Require Export measures borel.
 From mathcomp Require Import ssreflect ssrbool ssrfun eqtype choice fintype bigop.
 
@@ -158,7 +158,7 @@ Section outer_measure_props.
         * rewrite -assoc. apply intersect_proper; first by reflexivity.
           intros x; split; first by firstorder.
           intros Hin; split; auto. intros i Hle.
-          eapply disjoint_elim; try eassumption. apply Hdisj. omega.
+          eapply disjoint_elim; try eassumption. apply Hdisj. lia.
         * rewrite -assoc. apply intersect_proper; first by reflexivity.
           intros x; split.
           ** intros [Hin1 Hin2] i. inversion 1; subst; eauto.

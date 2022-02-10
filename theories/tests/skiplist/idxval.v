@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From Coq Require Export Sorted.
 From iris.program_logic Require Export weakestpre prob_adequacy.
 From iris.base_logic.lib Require Export invariants.
@@ -426,7 +426,7 @@ Proof.
     rewrite /proj1_sig.
     assert (Permutation (remove Z_eq_dec a' (a :: l)) (l1 ++ l2)) as ->.
     { rewrite remove_perm_proper; last eassumption.
-      rewrite //=; destruct Z_eq_dec; last omega.
+      rewrite //=; destruct Z_eq_dec; last lia.
       rewrite remove_not_in; first reflexivity.
       rewrite Hperm in HNoDup * => HND.  
       inversion HND; subst. rewrite elem_of_list_In; eauto.
@@ -434,6 +434,6 @@ Proof.
     eapply IHn; eauto.
     * rewrite Heq.
       rewrite (Permutation_length Hperm) => //=.
-      omega.
+      lia.
     * rewrite Hperm in HNoDup *. inversion 1; subst; eauto.
 Qed.

@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega Fourier.
+Require Import Reals Psatz Lia Fourier.
 From stdpp Require Import tactics.
 From discprob.measure Require Export measures borel outer_measure.
 From discprob.prob Require Import countable rearrange double.
@@ -43,7 +43,7 @@ Proof.
   { intros n.  specialize (Hneg (/(INR (n+1)))).
     apply ClassicalEpsilon.constructive_indefinite_description in Hneg as (x&Hspec).
     exact x.
-    abstract (apply Rinv_0_lt_compat, pos_INR'; omega).
+    abstract (apply Rinv_0_lt_compat, pos_INR'; lia).
   }
   edestruct (Bolzano_Weierstrass un) as (x&Hneighbor); eauto.
   { intros.  rewrite /un. destruct ClassicalEpsilon.constructive_indefinite_description.
@@ -75,10 +75,10 @@ Proof.
      apply Rplus_le_compat_l.
      transitivity (/ (INR N)); last (rewrite //= in HleN; nra).
      left; apply Rinv_lt_contravar.
-     * assert (0 < INR N) by (apply pos_INR'; omega).
-       assert (0 < INR (N' + 1)) by (apply pos_INR'; omega).
+     * assert (0 < INR N) by (apply pos_INR'; lia).
+       assert (0 < INR (N' + 1)) by (apply pos_INR'; lia).
        nra.
-     * apply lt_INR. omega.
+     * apply lt_INR. lia.
   }
   eapply ball_triangle; eauto. 
 Qed.

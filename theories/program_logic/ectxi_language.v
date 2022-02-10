@@ -216,7 +216,7 @@ Section ectxi_language.
     rewrite HeqKl in HeqKl'.
     apply (f_equal length) in HeqKl'.
     rewrite ?app_length in HeqKl'.
-    destruct (Kl); rewrite //= in HeqKl HeqKl'; auto; try omega.
+    destruct (Kl); rewrite //= in HeqKl HeqKl'; auto; try lia.
   Qed.
 
   Definition ectxi_lang_ectx_mixin :

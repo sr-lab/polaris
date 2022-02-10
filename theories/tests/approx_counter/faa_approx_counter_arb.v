@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From iris.program_logic Require Export weakestpre prob_adequacy.
 From iris.base_logic.lib Require Export invariants.
 From iris.heap_lang Require Export lang adequacy.
@@ -65,15 +65,15 @@ Lemma select_upto_spec1 curr:
   pspec (select_upto curr) (λ x, x  <= curr)%nat.
 Proof.
   rewrite /approx_incr/select_upto.
-  eapply (pspec_conseq _ (λ x, x <= curr + 0)%nat); last by (intros; omega).
+  eapply (pspec_conseq _ (λ x, x <= curr + 0)%nat); last by (intros; lia).
   generalize O.
   induction curr => //= n.
-  * apply pspec_mret. omega.
+  * apply pspec_mret. lia.
   * rewrite -pidist_union_foldleft_hd.
     apply pspec_union.
-    ** apply pspec_mret; auto. omega.
+    ** apply pspec_mret; auto. lia.
     ** eapply pspec_conseq; first eapply IHcurr.
-       rewrite //=. intros a Hle. omega.
+       rewrite //=. intros a Hle. lia.
 Qed.
 
 Lemma approx_incr_bounded:
@@ -82,8 +82,8 @@ Proof.
   eapply (pspec_mbind _ _ (λ x, x <= MAX)%nat); first eapply select_upto_spec1.
   intros a Hle. rewrite /flip_incr.
   apply pspec_pidist_plus.
-  * apply pspec_mret. omega.
-  * apply pspec_mret. omega.
+  * apply pspec_mret. lia.
+  * apply pspec_mret. lia.
 Qed.
 
 Lemma approx_incr_bounded':
@@ -108,7 +108,7 @@ Proof.
   revert curr curr'.
   induction n => //=.
   intros curr curr' Hle.
-  eapply IHn. omega.
+  eapply IHn. lia.
 Qed.
 
 Lemma approx_n_bounded_incr n curr:
@@ -117,7 +117,7 @@ Proof.
   revert curr.
   induction n => //=.
   intros curr.
-  etransitivity; first eapply IHn. eapply approx_n_bounded_mono; omega.
+  etransitivity; first eapply IHn. eapply approx_n_bounded_mono; lia.
 Qed.
 
 Lemma approx_n_bounded n tot curr:
@@ -128,17 +128,17 @@ Proof.
   induction n => tot curr.
   - apply pspec_mret => //=. 
   - rewrite /=. apply pspec_union.
-    * apply pspec_mret => //=; split; try omega.
+    * apply pspec_mret => //=; split; try lia.
       etransitivity; first eapply approx_n_bounded_incr.
-      eapply approx_n_bounded_mono; omega.
+      eapply approx_n_bounded_mono; lia.
     * eapply pspec_mbind; first eapply approx_incr_bounded.
     intros a Hle.
     eapply pspec_conseq; first eapply IHn => //=.
     intros k => //=.
-    intros (?&?). split; first by omega.
+    intros (?&?). split; first by lia.
     etransitivity; first eassumption. 
     apply approx_n_bounded_mono.
-    rewrite //= in Hle. omega.
+    rewrite //= in Hle. lia.
 Qed.
 
 Lemma approx_n_bounded_diff n tot curr:
@@ -220,7 +220,7 @@ Proof.
         apply Rplus_le_compat.
         ** rewrite Rabs_right; last apply Rle_ge, pos_INR. by right. 
         ** rewrite Rabs_Ropp. rewrite Rabs_right; last apply Rle_ge, pos_INR. 
-           apply le_INR. rewrite //= in Hle. omega.
+           apply le_INR. rewrite //= in Hle. lia.
       * intros. rewrite IHn => //=.
       * apply ex_Ex_extrema_bounded_supp_fun.
         eapply pspec_bounded. exists (INR (S n + tot) + (INR (approx_n_bound (S n) l))).
@@ -234,7 +234,7 @@ Proof.
         apply Rplus_le_compat.
         ** rewrite Rabs_right; last apply Rle_ge, pos_INR. by right. 
         ** rewrite Rabs_Ropp. rewrite Rabs_right; last apply Rle_ge, pos_INR. 
-           apply le_INR. rewrite //= in Hb. omega.
+           apply le_INR. rewrite //= in Hb. lia.
     }
     rewrite Ex_min_plus_const_l.
     rewrite ?plus_INR.
@@ -274,7 +274,7 @@ Proof.
         apply Rplus_le_compat.
         ** rewrite Rabs_right; last apply Rle_ge, pos_INR. by right. 
         ** rewrite Rabs_Ropp. rewrite Rabs_right; last apply Rle_ge, pos_INR. 
-           apply le_INR. rewrite //= in Hle. omega.
+           apply le_INR. rewrite //= in Hle. lia.
       * intros. rewrite IHn => //=.
       * apply ex_Ex_extrema_bounded_supp_fun.
         eapply pspec_bounded. exists (INR (S n + tot) + (INR (approx_n_bound (S n) l))).
@@ -288,7 +288,7 @@ Proof.
         apply Rplus_le_compat.
         ** rewrite Rabs_right; last apply Rle_ge, pos_INR. by right. 
         ** rewrite Rabs_Ropp. rewrite Rabs_right; last apply Rle_ge, pos_INR. 
-           apply le_INR. rewrite //= in Hb. omega.
+           apply le_INR. rewrite //= in Hb. lia.
     }
     rewrite Ex_max_plus_const_l.
     setoid_rewrite plus_INR.
@@ -323,10 +323,10 @@ Proof.
   iIntros. wp_let. wp_let.
   wp_op; case_bool_decide.
   * wp_if. 
-    rewrite Z.min_l; last by omega.
+    rewrite Z.min_l; last by lia.
     by iApply "HΦ".
   * wp_if. 
-    rewrite Z.min_r; last by omega.
+    rewrite Z.min_r; last by lia.
     by iApply "HΦ".
 Qed.
 
@@ -400,7 +400,7 @@ Proof.
   { iDestruct (own_valid_2 with "Hbad Hγp") as %?%frac_auth_frag_valid_op_1_l; done. }
 
   iDestruct (own_valid_2 with "Hγp' Hγp") as % ?%frac_auth_included_total%nat_included.
-  destruct np_global as [|np_global]; first by omega.
+  destruct np_global as [|np_global]; first by lia.
   rewrite //=.
 
   assert (0 <= IZR 1 / IZR (Z.min c MAX + 1) ∧ IZR 1 / IZR (Z.min c MAX + 1) <= 1).
@@ -409,11 +409,11 @@ Proof.
     assert (IZR (Z.min c MAX + 1) = INR (Z.to_nat (Z.min c MAX) + 1)).
     rewrite INR_IZR_INZ; f_equal.
     assert (0 ≤ Z.min c MAX).
-    { apply Z.min_glb; omega. }
+    { apply Z.min_glb; lia. }
     replace 1%nat with (Z.to_nat 1); try auto.
-    rewrite -Z2Nat.inj_add; try omega.
+    rewrite -Z2Nat.inj_add; try lia.
     { rewrite Z2Nat.id => //=. etransitivity; first eauto.
-      rewrite //=.  omega.
+      rewrite //=.  lia.
     }
     rewrite H0. destruct (INRp1_prob (Z.to_nat (Z.min c MAX))).
     split; auto; etransitivity; eauto; rewrite plus_INR //=.
@@ -435,13 +435,13 @@ Proof.
         { rewrite //=.  f_equal. rewrite plus_IZR. f_equal.
           rewrite INR_IZR_INZ. f_equal.
           rewrite Z2Nat.id; auto.
-          apply Z.min_glb; omega.
+          apply Z.min_glb; lia.
         }
         * apply ip_coupling_mret.
           rewrite -Z2Nat.inj_succ;
-          last (apply Z.min_glb; omega).
+          last (apply Z.min_glb; lia).
           rewrite Z2Nat.id; auto.
-          cut (0 ≤ Z.min c MAX); intros; try (apply Z.min_glb); omega.
+          cut (0 ≤ Z.min c MAX); intros; try (apply Z.min_glb); lia.
         * apply ip_coupling_mret.
           split; auto => //=.
       - eexists. split; last first.
@@ -454,7 +454,7 @@ Proof.
             replace (O :: iota 1 MAX) with (iota O (S MAX - 0)); last first.
             { rewrite //=.  }
             apply Iter.In_iota; split.
-            **  omega. 
+            **  lia. 
             ** rewrite Z2Nat.inj_min.
                etransitivity; first apply Min.le_min_r.
                rewrite //=. 
@@ -466,14 +466,14 @@ Proof.
     rewrite //= in HR. (* destruct HR as (Heqz&?); subst. *)
     destruct b.
     * iMod (own_update_2 with "Hγp' Hγp") as "[Hγp' Hγp]".
-      { apply frac_auth_update, (nat_local_update _ _ (np_global) (np)); omega. }
+      { apply frac_auth_update, (nat_local_update _ _ (np_global) (np)); lia. }
       iMod (own_update_2 with "Hγv' Hγv") as "[Hγv' Hγv]".
-      { apply frac_auth_update, (nat_local_update _ _ (nv_global + z') (nc + z')); omega. }
+      { apply frac_auth_update, (nat_local_update _ _ (nv_global + z') (nc + z')); lia. }
       iMod ("Hclose" with "[Hγp' Hγv' Hprob]").
       { iNext. iExists np_global, (nv_global + z')%nat. iFrame.
-        iSplitL ""; first (iPureIntro; omega).
+        iSplitL ""; first (iPureIntro; lia).
         iRight. replace (S (max - S np_global)) with (max - np_global)%nat; first iFrame.
-        omega. }
+        lia. }
 
       iModIntro.
       wp_let.
@@ -483,7 +483,7 @@ Proof.
       iInv N1 as (c') ">[Hγl' Hl]" "Hclose".
       wp_faa.
       iMod (own_update_2 with "Hγl' Hγl") as "[Hγl' Hγl]".
-      { apply frac_auth_update, (nat_local_update _ _ (c' + z') (nc + z')); omega. }
+      { apply frac_auth_update, (nat_local_update _ _ (c' + z') (nc + z')); lia. }
 
       iMod ("Hclose" with "[Hγl' Hl]").
       { iNext. iExists (c' + z')%nat. iFrame.
@@ -496,14 +496,14 @@ Proof.
       iExists (nc + z')%nat.
       iFrame.
     * replace (nv_global + z')%nat with (nv_global); last first.
-      { apply Z_of_nat_inj. rewrite Nat2Z.inj_add HR. omega. }
+      { apply Z_of_nat_inj. rewrite Nat2Z.inj_add HR. lia. }
       iMod (own_update_2 with "Hγp' Hγp") as "[Hγp' Hγp]".
-      { apply frac_auth_update, (nat_local_update _ _ (np_global) (np)); omega. }
+      { apply frac_auth_update, (nat_local_update _ _ (np_global) (np)); lia. }
       iMod ("Hclose" with "[Hγp' Hγv' Hprob]").
       { iNext. iExists np_global, nv_global. iFrame.
-        iSplitL ""; first (iPureIntro; omega).
+        iSplitL ""; first (iPureIntro; lia).
         iRight. replace (S (max - S np_global)) with (max - np_global)%nat; first iFrame.
-        omega. }
+        lia. }
 
       iModIntro.
       wp_let.
@@ -567,7 +567,7 @@ Proof.
   { iNext. iExists O. iFrame. }
   iMod (inv_alloc N2 _ (acounter_prob_inv n γp γv) with "[Hγp' Hγv' Hprob]").
   { iNext. iExists n, O. iFrame. iSplitL ""; auto. iRight.
-    replace (n - n)%nat with O by omega. done. }
+    replace (n - n)%nat with O by lia. done. }
 
   iApply "HΦ".
   iModIntro. iFrame.
@@ -684,19 +684,19 @@ Proof.
   iLöb as "IH". iIntros (np lb) "(Hpure&Hcounter) Hwand".
   iDestruct "Hpure" as %Hle.
   destruct lb.
-  * wp_match. iApply "Hwand". rewrite /lenTrue//=. replace (np - 0)%nat with np by omega.
+  * wp_match. iApply "Hwand". rewrite /lenTrue//=. replace (np - 0)%nat with np by lia.
     done.
   * rewrite /l2tuple -/l2tuple.
     wp_match. wp_let. wp_proj.
     wp_let. wp_let. wp_proj. wp_let.
     destruct b.
     ** destruct np.
-       { exfalso. rewrite /lenTrue//= in Hle. omega. }
+       { exfalso. rewrite /lenTrue//= in Hle. lia. }
        wp_if.
        wp_apply (incr_spec' with "Hcounter").
        iIntros "Hcounter".
        wp_let.  iApply ("IH" with "[Hcounter] [Hwand]").
-       { iFrame.  iPureIntro. rewrite /lenTrue//= in Hle *. omega. }
+       { iFrame.  iPureIntro. rewrite /lenTrue//= in Hle *. lia. }
        iIntros (v). iSpecialize ("Hwand" $! v).
        replace (S np - lenTrue (true :: lb))%nat with (np - lenTrue lb)%nat; first iFrame.
        { rewrite /lenTrue//=. }
@@ -744,7 +744,7 @@ Proof.
   iIntros (γl γp γv l) "Hcounter".
   rewrite -(Qp_div_2 1).
   assert (∃ k, lenTrue l1 + (lenTrue l2 + k) = max_length)%nat as (k&Heqk).
-  { exists (max_length - lenTrue l1 - lenTrue l2)%nat. omega. }
+  { exists (max_length - lenTrue l1 - lenTrue l2)%nat. lia. }
   rewrite -{2}Heqk.
   rewrite Acounter_sep.
   iDestruct "Hcounter" as "(Hcounter1&Hcounter2)".
@@ -755,13 +755,13 @@ Proof.
                     (λ v, Acounter  max_length γl γp γv l (1 / 2)%Qp k)%I
                with "[Hcounter1] [Hcounter2]").
   - rewrite -Hl1. wp_apply (countTrue_spec with "[Hcounter1]").
-    { iFrame. iPureIntro; omega. }
+    { iFrame. iPureIntro; lia. }
     iIntros (_); auto.
     rewrite Nat.sub_diag; auto.
   - rewrite -Hl2. wp_apply (countTrue_spec with "[Hcounter2]").
-    { iFrame. iPureIntro; omega. }
+    { iFrame. iPureIntro; lia. }
     iIntros (_); auto.
-    replace (lenTrue l2 + k - lenTrue l2)%nat with k by omega.
+    replace (lenTrue l2 + k - lenTrue l2)%nat with k by lia.
     auto.
   - iIntros (v1' v2') "(Hpost1&Hpost2)".
     iCombine "Hpost1" "Hpost2" as "Hpost".
@@ -772,7 +772,7 @@ Proof.
     iFrame. iPureIntro.
     rewrite -Heqk; f_equal. repeat f_equal.
     rewrite -Nat2Z.inj_add //=. f_equal.
-    omega.
+    lia.
 Qed.
 End nondet_list_client.
 

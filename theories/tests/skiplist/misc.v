@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From Coq Require Export Sorted.
 From iris.program_logic Require Export weakestpre prob_adequacy.
 From iris.base_logic.lib Require Export invariants.
@@ -36,7 +36,7 @@ Lemma length_remove_le {A: Type} {HEQ} (a: A) l:
   (length (remove HEQ a l) <= length l)%nat.
 Proof.
   induction l => //=.
-  destruct HEQ; eauto; rewrite //=; omega.
+  destruct HEQ; eauto; rewrite //=; lia.
 Qed.
 
 Lemma length_remove_lt {A: Type} {HEQ} (a: A) l:
@@ -50,7 +50,7 @@ Proof.
       eapply le_lt_trans; first apply length_remove_le; eauto.
     * rewrite //=. destruct HEQ; subst.
       ** eapply le_lt_trans; first apply length_remove_le; eauto.
-      ** rewrite //=. feed pose proof IHl; eauto. omega.
+      ** rewrite //=. feed pose proof IHl; eauto. lia.
 Qed.
 
 Definition set_of_list {K : Type} `{EqDecision K} `{Countable K} (L: seq K) : gset K :=
@@ -95,14 +95,14 @@ Proof.
   eauto with *.
   apply not_elem_of_cons; split.
   * apply Sorted_inv in Hsort as (?&Hhd).
-    inversion Hhd; subst; omega.
+    inversion Hhd; subst; lia.
   * eapply IHL.
     apply Sorted_inv in Hsort as (Hsort&Hhd).
     apply Sorted_inv in Hsort as (?&Hhd').
     apply Sorted_cons; eauto.
     inversion Hhd'. subst.
     ** econstructor. 
-    ** econstructor. inversion Hhd. omega.
+    ** econstructor. inversion Hhd. lia.
 Qed.
 
 Lemma Sorted_Zlt_NoDup (L: list Z):
@@ -128,7 +128,7 @@ Proof.
     ** subst. econstructor.
        assert (x ≠ b).
        { firstorder. }
-       omega.
+       lia.
 Qed.
 
 Lemma Sorted_Zge_NoDup_Zgt (L: list Z):
@@ -144,7 +144,7 @@ Proof.
     ** subst. econstructor.
        assert (x ≠ b).
        { firstorder. }
-       omega.
+       lia.
 Qed.
 
 From discprob.idxval Require Import pival
@@ -162,7 +162,7 @@ Module ZOrder <: Orders.TotalLeBool.
   Theorem leb_total : forall a1 a2, leb a1 a2 = true \/ leb a2 a1 = true.
   Proof.
     intros a1 a2. rewrite /leb.
-    do 2 destruct (Z_le_dec); auto; try omega.
+    do 2 destruct (Z_le_dec); auto; try lia.
   Qed.
 End ZOrder.
 
@@ -176,7 +176,7 @@ Module ZOrderGe <: Orders.TotalLeBool.
   Theorem leb_total : forall a1 a2, leb a1 a2 = true \/ leb a2 a1 = true.
   Proof.
     intros a1 a2. rewrite /leb.
-    do 2 destruct (Z_ge_dec); auto; try omega.
+    do 2 destruct (Z_ge_dec); auto; try lia.
   Qed.
 End ZOrderGe.
 
@@ -262,7 +262,7 @@ Proof.
       apply Permutation.Permutation_cons_inv in Hperm; eauto.
     }
     
-    exfalso. cut (node_key a < node_key a' ∧ node_key a' < node_key a); first omega.
+    exfalso. cut (node_key a < node_key a' ∧ node_key a' < node_key a); first lia.
     split.
     * apply Sorted_StronglySorted in Hsorted; last eauto with *.
       inversion Hsorted as [| ??? Hall]; subst.
@@ -337,20 +337,20 @@ Lemma Zset_inclusive_range_spec z gap:
 Proof.
   induction gap.
   - rewrite //= => z'. split.
-    * intros ?%elem_of_singleton. subst. omega.
-    * intros (?&?); assert (z = z') as -> by omega. set_solver.
+    * intros ?%elem_of_singleton. subst. lia.
+    * intros (?&?); assert (z = z') as -> by lia. set_solver.
   - rewrite /Zset_inclusive_range -/Zset_inclusive_range => z'. split.
     * intros [Hspz%elem_of_singleton|Hrec]%elem_of_union.
-      ** split; omega.
-      ** destruct (IHgap z') as (Himpl&?). specialize (Himpl Hrec). destruct Himpl; split; try omega.
+      ** split; lia.
+      ** destruct (IHgap z') as (Himpl&?). specialize (Himpl Hrec). destruct Himpl; split; try lia.
          etransitivity; first eassumption.
          rewrite Nat2Z.inj_succ.
-         omega.
+         lia.
     * intros (?&Hle).
       apply Zle_lt_or_eq in Hle as [Hlt|?].
       ** apply elem_of_union_r. eapply IHgap; eauto.
          rewrite Nat2Z.inj_succ in Hlt *.
-         omega.
+         lia.
       ** apply elem_of_union_l. set_solver.
 Qed.
 
@@ -362,12 +362,12 @@ Proof.
     intros (Hincl&Hneq)%elem_of_difference.
     apply Zset_inclusive_range_spec in Hincl.
     assert (z' ≠ z ∧ z' ≠ z + gap) by set_solver.
-    omega.
+    lia.
   - rewrite /Zset_exclusive_range. 
     intros (?&?).
     apply elem_of_difference; split.
-    * apply Zset_inclusive_range_spec; omega.
-    * assert (z' ≠ z ∧ z' ≠ z + gap) by omega.
+    * apply Zset_inclusive_range_spec; lia.
+    * assert (z' ≠ z ∧ z' ≠ z + gap) by lia.
       set_solver.
 Qed.
 
@@ -380,13 +380,13 @@ Proof.
   intros z'.
   rewrite /Zlt_range Zset_exclusive_range_spec; split.
   - intros (?&Hup).  split; auto.
-    replace z2 with (z1 + (z2 - z1)); last by omega.
+    replace z2 with (z1 + (z2 - z1)); last by lia.
     destruct (Z_le_dec 0 (z2 - z1)).
     * rewrite Z2Nat.id in Hup; auto.
-    * rewrite Z_to_nat_nonpos //= in Hup; last by omega.
-      omega.
+    * rewrite Z_to_nat_nonpos //= in Hup; last by lia.
+      lia.
   - intros (?&?).
-    rewrite Z2Nat.id; omega.
+    rewrite Z2Nat.id; lia.
 Qed.
 
 Lemma Zlt_range_split z1 z2 z:
@@ -397,12 +397,12 @@ Proof.
   intros x. split.
   - rewrite Zlt_range_spec. intros (?&?).
     destruct (Ztrichotomy_inf x z) as [[Hlt|Heq]|Hgt].
-    * do 2 apply elem_of_union_l. rewrite Zlt_range_spec. omega.
+    * do 2 apply elem_of_union_l. rewrite Zlt_range_spec. lia.
     * apply elem_of_union_r. set_solver. 
-    * apply elem_of_union_l, elem_of_union_r. rewrite Zlt_range_spec. omega.
+    * apply elem_of_union_l, elem_of_union_r. rewrite Zlt_range_spec. lia.
   - rewrite Zlt_range_spec. intros [[Hin|Hin]%elem_of_union|Hin]%elem_of_union. 
-    * rewrite Zlt_range_spec in Hin *; omega.
-    * rewrite Zlt_range_spec in Hin *; omega.
+    * rewrite Zlt_range_spec in Hin *; lia.
+    * rewrite Zlt_range_spec in Hin *; lia.
     * apply elem_of_singleton in Hin. subst. auto.
 Qed.
 
@@ -413,11 +413,11 @@ Proof.
   intros Hrange. rewrite (Zlt_range_split z1 z2 z) //.
   rewrite ?gset_disj_union; auto.
   * intros z' [Hin%Zlt_range_spec|Hin%Zlt_range_spec]%elem_of_union.
-    ** intros; cut (z' = z); first omega.
+    ** intros; cut (z' = z); first lia.
        set_solver.
-    ** intros; cut (z' = z); first omega.
+    ** intros; cut (z' = z); first lia.
        set_solver.
-  * intros z'. rewrite ?Zlt_range_spec. omega.
+  * intros z'. rewrite ?Zlt_range_spec. lia.
 Qed.
 Lemma rep_to_node_inj np np':
   rep_to_node np = rep_to_node np' →
@@ -490,9 +490,9 @@ Definition Zbetween z1 z2 x:
   { z1 < x < z2} + {¬ z1 < x < z2}.
 Proof.
   destruct (Z_lt_dec z1 x); last first.
-  { right. omega. }
+  { right. lia. }
   destruct (Z_lt_dec x z2); last first.
-  { right. omega. }
+  { right. lia. }
   left. auto.
 Qed.
 
@@ -549,7 +549,7 @@ Proof.
   induction l as [|a l] => Hrange //=.
   - intros.  destruct Zbetween => //=.
     * feed pose proof (Hrange a); first by left.
-      omega.
+      lia.
     * eapply IHl. intros. eapply Hrange. by right.
 Qed.
 
@@ -561,7 +561,7 @@ Proof.
   - intros.  destruct Zbetween => //=.
     * assert (a >= z2); first apply Hrange; eauto.
       { by left. }
-      omega.
+      lia.
     * eapply IHl. intros. eapply Hrange. by right.
 Qed.
 
@@ -579,7 +579,7 @@ Proof.
   - intros.  destruct Zbetween => //=.
     * assert (a <= z1 ∨ a >= z2); first apply Hrange; eauto.
       { by left. }
-      omega.
+      lia.
     * eapply IHl. intros. eapply Hrange. by right.
 Qed.
 
@@ -591,7 +591,7 @@ Proof.
   - intros.  destruct Zbetween => //=.
     * f_equal. eapply IHl. intros; eapply Hrange; by right.
     * destruct (Hrange a); first by left.
-      exfalso. omega.
+      exfalso. lia.
 Qed.
 
 Lemma Zlt_Sorted_forall_before z L1 L2:
@@ -628,7 +628,7 @@ Proof.
 Qed.
 
 Global Instance fold_left_perm_Proper:
-  Proper (Permutation ==> eq ==> eq) (fold_left Zmax).
+  Proper (Permutation ==> eq ==> eq) (fold_left Z.max).
 Proof.
   intros L1 L2 Hperm ?? ->.
   apply Zle_antisym.
@@ -652,11 +652,11 @@ Proof.
   revert hd.
   induction L1 => hd //=.
   - intros (?&Hd)%Sorted_inv.
-    rewrite Z.max_r; auto. inversion Hd; subst; eauto. omega.
+    rewrite Z.max_r; auto. inversion Hd; subst; eauto. lia.
   - intros Hsort. rewrite -{2}(IHL1 a).
     * f_equal. rewrite Z.max_r; auto.
       apply Sorted_inv in Hsort as (?&Hd).
-      inversion Hd; subst; eauto. omega.
+      inversion Hd; subst; eauto. lia.
     * apply Sorted_inv in Hsort; intuition.
 Qed.
 
@@ -668,18 +668,18 @@ Lemma Sorted_Zlt_cover_gap L1 L2 zpred zfind k:
   zfind = k.
 Proof.
   induction L1.
-  - rewrite //= => Hsort Hr1 Hr2 Hin. inversion Hin as [|[Heq|Hin']]; subst; try omega.
+  - rewrite //= => Hsort Hr1 Hr2 Hin. inversion Hin as [|[Heq|Hin']]; subst; try lia.
     exfalso. apply Sorted_StronglySorted in Hsort; last eauto with *.
     apply StronglySorted_inv in Hsort as (Hsort&_).
     apply StronglySorted_inv in Hsort as (Hsort&hd).
-    assert (zfind < k); last by omega.
+    assert (zfind < k); last by lia.
     eapply Forall_forall; eauto.
   - rewrite //=. intros Hsort ?? Hin.
     inversion Hin.
     * subst.
       exfalso. apply Sorted_StronglySorted in Hsort; last eauto with *.
       apply StronglySorted_inv in Hsort as (Hsort&Hhd).
-      assert (k < zpred); last by omega.
+      assert (k < zpred); last by lia.
       eapply Forall_forall; eauto.
       apply in_app_iff. right. by left.
     * eapply IHL1; eauto.

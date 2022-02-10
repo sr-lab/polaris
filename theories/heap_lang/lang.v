@@ -429,7 +429,7 @@ unshelve (refine
   | _, _ => None
   end)).
 - apply ival.primitive_mbind_inj.
-  * abstract (intros ??; inversion 1; zify; omega).
+  * abstract (intros ??; inversion 1; lia).
   * apply ival_unif_primitive.
 Defined.
 
@@ -541,7 +541,7 @@ Proof.
   rewrite -elem_of_elements.
   intros Hin.
   cut (l' <= (fold_left Pos.max (elements (dom (gset loc) σ)) 1%positive))%positive.
-  { rewrite /l in Hle. zify. omega. }
+  { rewrite /l in Hle. lia. }
   apply seq_ext.fold_left_Pmax_ub, elem_of_list_In; auto.
 Qed.
 

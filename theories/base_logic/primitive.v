@@ -4,7 +4,7 @@ From iris.algebra Require Export updates.
 Set Default Proof Using "Type".
 Local Hint Extern 1 (_ ≼ _) => etrans; [eassumption|].
 Local Hint Extern 1 (_ ≼ _) => etrans; [|eassumption].
-Local Hint Extern 10 (_ ≤ _) => omega.
+Local Hint Extern 10 (_ ≤ _) => lia.
 
 (** logical connectives *)
 Program Definition uPred_pure_def {M} (φ : Prop) : uPred M :=
@@ -292,7 +292,7 @@ Proof.
 Qed.
 Global Instance later_contractive : Contractive (@uPred_later M).
 Proof.
-  unseal; intros [|n] P Q HPQ; split=> -[|n'] x ?? //=; try omega.
+  unseal; intros [|n] P Q HPQ; split=> -[|n'] x ?? //=; try lia.
   apply HPQ; eauto using cmra_validN_S.
 Qed.
 Definition later_ne : NonExpansive (@uPred_later M) := _.

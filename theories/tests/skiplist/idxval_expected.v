@@ -1,4 +1,4 @@
-Require Import Reals Psatz Omega.
+Require Import Reals Psatz Lia.
 From Coq Require Export Sorted.
 From iris.program_logic Require Export weakestpre prob_adequacy.
 From iris.base_logic.lib Require Export invariants.
@@ -32,14 +32,14 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     clear HNoDup.
     revert lt lb. induction l => lt lb.
     - rewrite //= singleton_mret. apply pspec_mret.
-      rewrite //= -?Permuted_sort; split; try omega.
+      rewrite //= -?Permuted_sort; split; try lia.
     - rewrite /single_skiplist -/single_skiplist singleton_bind.
       eapply pspec_mbind with (P := λ l, (length l <= length lt + 1)%nat).
       * rewrite singleton_plus ?singleton_mret.
-        apply pspec_pidist_plus; apply pspec_mret; rewrite //=; omega.
+        apply pspec_pidist_plus; apply pspec_mret; rewrite //=; lia.
       * intros lt' Hle. eapply pspec_conseq; first eapply IHl.
         intros (ls1&ls2) => //=.
-        intros (?&?); split; omega.
+        intros (?&?); split; lia.
   Qed.
 
   Local Open Scope nat_scope.
@@ -49,7 +49,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
   Proof.
     induction l => //=.
     rewrite /cost_top //=.
-    destruct Zbetween => //=; rewrite /cost_top in IHl; omega.
+    destruct Zbetween => //=; rewrite /cost_top in IHl; lia.
   Qed.
 
   Lemma cost_bottom_bounded_length lt l k:
@@ -57,7 +57,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
   Proof.
     induction l => //=.
     rewrite /cost_bottom //=.
-    destruct Zbetween => //=; rewrite /cost_bottom in IHl; omega.
+    destruct Zbetween => //=; rewrite /cost_bottom in IHl; lia.
   Qed.
 
   Lemma cost_bounded2 l k:
@@ -70,7 +70,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     rewrite /skip_cost/level2_cost.
     specialize (cost_top_bounded_length l1 k).
     specialize (cost_bottom_bounded_length l1 l2 k).
-    destruct (decide _); omega.
+    destruct (decide _); lia.
   Qed.
 
   Import misc.
@@ -97,7 +97,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
       { intros. eapply Hin. by right. }
       rewrite {2}/cost_top/list_between.
       simpl filter. destruct Zbetween.
-      { exfalso. cut (a >= k)%Z; first by omega.
+      { exfalso. cut (a >= k)%Z; first by lia.
         eapply Hin. by left.
       }
       rewrite //=/list_between//=. nra.
@@ -125,7 +125,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
       { intros. eapply Hle. by right. }
       rewrite {2}/cost_top/list_between.
       simpl filter. destruct Zbetween; last first.
-      { exfalso. cut (INT_MIN < a < k)%Z; first by omega.
+      { exfalso. cut (INT_MIN < a < k)%Z; first by lia.
         eapply Hle. by left.
       }
       rewrite /cost_top. rewrite S_INR.
@@ -147,17 +147,17 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
         rewrite app_comm_cons.
         rewrite Permutation_app_comm.
         rewrite app_comm_cons. done.
-      * assert (a <= k1 ∨ a >= k2)%Z as [Hle|Hge] by omega.
+      * assert (a <= k1 ∨ a >= k2)%Z as [Hle|Hge] by lia.
         ** exists (a :: l1), l2.
            split_and!; eauto.
            *** rewrite {1}Hperm //=.
-           *** intros ? [[]|]; eauto; try omega.
+           *** intros ? [[]|]; eauto; try lia.
         ** exists l1, (a :: l2). 
            split_and!; eauto.
            *** rewrite {1}Hperm //=.
                rewrite app_cat. rewrite app_assoc Permutation_app_comm.
                rewrite app_comm_cons. rewrite Permutation_app_comm -app_assoc //=.
-           *** intros ? [[]|]; eauto; try omega.
+           *** intros ? [[]|]; eauto; try lia.
   Qed.
 
   Lemma list_between_In_inv1 l k1 k2:
@@ -172,7 +172,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     (∀ x, In x l → k1 < x → x < k2 → In x (list_between l k1 k2))%Z.
   Proof.
     induction l => //=.
-    intros x [[]|Hin]; destruct Zbetween; eauto; intros; try omega.
+    intros x [[]|Hin]; destruct Zbetween; eauto; intros; try lia.
     * by left.
     * right. eapply IHl; eauto.
   Qed.
@@ -185,7 +185,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     intros Hin.
     edestruct (list_between_split l INT_MIN k) as (l1&l2&Hperm&Hl1&Hg2).
     assert (l1 = [::]).
-    {  destruct l1 as [| z l1]; auto. exfalso. cut (INT_MIN < z ∧ z <= INT_MIN)%Z; first by omega.
+    {  destruct l1 as [| z l1]; auto. exfalso. cut (INT_MIN < z ∧ z <= INT_MIN)%Z; first by lia.
        split.
        * eapply Hin. rewrite Hperm. apply in_app_iff.
          do 2 left => //=.
@@ -213,21 +213,21 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     induction l1 as [| a' l1'].
     - rewrite //=/cost_bottom. intros [Hge|Hcase].
       * simpl list_between => //=. destruct Zbetween.
-        ** omega.
+        ** lia.
         ** done.
       * firstorder.
     - rewrite /cost_bottom. intros [Hge|Hcase].
       * simpl list_between => //=. destruct Zbetween.
-        ** omega.
+        ** lia.
         ** done.
       * simpl list_between => //=. destruct Zbetween as [Hb|Hnb].
         ** exfalso.  destruct Hb as (Hret&?).
            destruct Hcase as (i'&Hin&?&?).
-           cut (i' <= ret_top (a' :: l1') k)%Z; first by omega.
+           cut (i' <= ret_top (a' :: l1') k)%Z; first by lia.
            rewrite /ret_top. 
            apply seq_ext.fold_left_Zmax_ub.
            apply list_between_In; eauto.
-           omega.
+           lia.
         ** done.
   Qed.
 
@@ -236,7 +236,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     ret_top (a :: l) k = ret_top l k.
   Proof.
     intros Hge.
-    rewrite /ret_top. simpl list_between. destruct Zbetween; try omega.
+    rewrite /ret_top. simpl list_between. destruct Zbetween; try lia.
   Qed.
 
   Lemma ret_top_cons2 l a k:
@@ -245,13 +245,13 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
   Proof.
     intros Hge.
     rewrite /ret_top. simpl list_between. destruct Hge as (i'&Hin&?&?).
-    destruct Zbetween; try omega.
+    destruct Zbetween; try lia.
     apply Z.le_antisymm.
     * apply seq_ext.fold_left_Zle_max_lub. 
       ** intros r' Hin'.
          destruct Hin' as [[]|Hin'].
          *** transitivity i'; auto. apply seq_ext.fold_left_Zmax_ub.
-             apply list_between_In; auto; omega.
+             apply list_between_In; auto; lia.
          *** apply seq_ext.fold_left_Zmax_ub; auto.
       ** apply seq_ext.fold_left_Zmax_init.
     * apply seq_ext.fold_left_Zmax_cons.
@@ -266,22 +266,22 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     induction l1 as [| a' l1'].
     - rewrite //=/cost_bottom. intros [Hge|Hcase].
       * simpl list_between => //=. destruct Zbetween as [|Hnzb].
-        ** omega.
+        ** lia.
         ** rewrite ret_top_cons1 //=.
       * firstorder.
     - rewrite /cost_bottom. intros [Hge|Hcase].
       * simpl list_between => //=. destruct Zbetween as [|Hnzb].
-        ** omega.
+        ** lia.
         ** rewrite ret_top_cons1 //=.
       * simpl list_between => //=. destruct Zbetween as [Hb|Hnb].
         ** exfalso.  destruct Hb as (Hret&?).
            destruct Hcase as (i'&Hin&?&?).
-           cut (i' <= ret_top (a :: a' :: l1') k)%Z; first by omega.
+           cut (i' <= ret_top (a :: a' :: l1') k)%Z; first by lia.
            rewrite /ret_top. 
            apply seq_ext.fold_left_Zmax_ub.
            apply list_between_In; eauto.
            *** right. done.
-           *** omega.
+           *** lia.
         ** rewrite ret_top_cons2 //=.
   Qed.
 
@@ -328,8 +328,8 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     ret_top [:: a] k = a.
   Proof.
     intros (?&?). rewrite /ret_top//=.
-    destruct Zbetween; last omega.
-    rewrite /fold_left//=. rewrite Z.max_r //=. omega.
+    destruct Zbetween; last lia.
+    rewrite /fold_left//=. rewrite Z.max_r //=. lia.
   Qed.
 
   Lemma bottom_split_list l1 l2 lb k:
@@ -364,7 +364,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
       { intros x Hin x' [[]|Hin']; eauto. 
         ** apply StronglySorted_inv in Hsort as (?&Hsort).
            rewrite Forall_forall in Hsort * => Hsort.
-           cut (a > x)%Z; first by omega.
+           cut (a > x)%Z; first by lia.
            eapply Hsort. apply elem_of_list_In; eauto.
         ** eapply Hl1_lb; eauto. by right. }
       { intros. eapply Hl1_range; by right. }
@@ -375,21 +375,21 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
            split.
            ** apply StronglySorted_inv in Hsort as (?&Hsort).
               rewrite Forall_forall in Hsort * => Hsort.
-              cut (a > x)%Z; first by omega.
+              cut (a > x)%Z; first by lia.
               eapply Hsort. apply elem_of_list_In; eauto.
            ** eapply Hl1_range; by left.
          * left. eapply Hl2_range; auto.
        }
       { intros x. rewrite in_app_iff. intros [Hin1|Hin2].
         * feed pose proof (Hl1_range x); first by right.
-          omega.
+          lia.
         * eapply Hl2_range; auto.
       }
       rewrite /cost_bottom.
       rewrite ret_top_single; last first.
       { apply Hl1_range. by left. }
       simpl list_between.
-      destruct Zbetween; first omega.
+      destruct Zbetween; first lia.
       rewrite list_between_all_in_range; last first.
       { intros i Hin; split.
         * apply Hl1_lb; auto; by left. 
@@ -420,7 +420,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     intros HNoDup Hk Hin.
     edestruct (list_between_split l INT_MIN k) as (l1&l2&Hperm&Hl1&Hg2).
     assert (l1 = [::]).
-    {  destruct l1 as [| z l1]; auto. exfalso. cut (INT_MIN < z ∧ z <= INT_MIN)%Z; first by omega.
+    {  destruct l1 as [| z l1]; auto. exfalso. cut (INT_MIN < z ∧ z <= INT_MIN)%Z; first by lia.
        split.
        * eapply Hin. rewrite Hperm. apply in_app_iff.
          do 2 left => //=.
@@ -474,7 +474,7 @@ Module Skiplist_Expected (Params: SKIPLIST_PARAMS).
     intros. rewrite -Ex_level2_cost //.
     apply Ex_ival_mono. intros (lt&lb).
     apply le_INR. rewrite /skip_cost/level2_cost.
-    destruct (decide _); omega.
+    destruct (decide _); lia.
   Qed.
 
   Lemma skiplist_ex_Ex (Skeys: gset Z) k:

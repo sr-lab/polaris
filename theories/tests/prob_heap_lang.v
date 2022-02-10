@@ -145,7 +145,6 @@ Section ClosedProofs.
     destruct b0, b => //=.
   Qed.
 
-  Print Assumptions test_Ex_min_true.
 End ClosedProofs.
 
 End tests.

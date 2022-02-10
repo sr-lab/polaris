@@ -376,8 +376,6 @@ Local Open Scope nat_scope.
 Definition incr (x: nat) : cost nat :=
   {| result := S x; work := 1; span := 1 |}.
 
-Eval compute in (parmap incr (1 :: 2 :: 3 :: [::])).
-
 Remark Hrange: (0 <= 1/2 <= 1)%R.
 Proof. split; fourier. Qed. 
 
@@ -389,12 +387,9 @@ Program Definition foo  : ldist_cost (seq nat) :=
   else
     a ← (dist_ret _ (parmap incr (1 :: 2 :: 3 :: [::])));
     dist_ret _ (parmap incr a).
-Eval compute in (outcomes foo).
 
 Program Definition foo'  : ldist_cost (seq nat) :=
   vs ← foo;
   dist_ret _ (parfilter (λ x, mret (x == 3)) vs).
-
-Eval compute in (outcomes foo').
 
 End tests.
